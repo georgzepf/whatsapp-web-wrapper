@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "author": {
+    "name": "Georg Zepf",
+    "email": "contact@zepfgeorg.com"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^3.9.2"
+  },
+  "type": "module",
+  "main": "",
+  "scripts": {},
+  "name": "whatsapp-web-wrapper",
+  "description": "NodeJs wrapper for web.whatsapp.com",
+  "license": "UNLICENSED"
+}
