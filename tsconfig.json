@@ -10,7 +10,8 @@
     "strict": true,
     "moduleResolution": "node",
     "typeRoots": [
-      "./node_modules/@types"
+      "./node_modules/@types",
+      "./types"
     ],
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -20,6 +21,7 @@
     "src/**/*"
   ],
   "exclude": [
-    "dist"
+    "dist",
+    "types"
   ]
 }
