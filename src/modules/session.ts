@@ -5,6 +5,7 @@ import Store from '../utils/store';
 import Helper from '../utils/helper';
 import InitMessage from '../../models/messages/init.message';
 // import RerefMessage from '../../models/messages/reref.message';
+import LoginMessage from '../../models/messages/login.message';
 import AuthCredentials from '../../models/auth-credentials';
 
 export default class Session {
@@ -62,9 +63,9 @@ export default class Session {
     const hmacBuffer: Buffer = Buffer.concat([secret.slice(0, 32), secret.slice(64, secret.length)]);
     return Buffer.compare(Helper.generateHmacSha256(hmacSecret, hmacBuffer), secret.slice(32, 64)) === 0;
   };
-  
+
   public static restoreSession(): void {
-    // restore session
+    Session.send <LoginMessage>(['admin', 'login', Store.clientToken, Store.serverToken, Store.clientId, 'takeover']);
   }
 
   private static send<T>(messageJson: T): void {

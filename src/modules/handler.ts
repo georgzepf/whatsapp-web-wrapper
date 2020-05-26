@@ -10,6 +10,7 @@ import BlocklistResponse from '../../models/responses/blocklist.response';
 import StreamResponse from '../../models/responses/stream.response';
 import PropsResponse from '../../models/responses/props.response';
 import AuthCredentials from '../../models/auth-credentials';
+import StatusResponse from '../../models/responses/status.response';
 
 export default class Handler {
   public static getEventType(messageJson: any[] | object): string {
@@ -31,6 +32,9 @@ export default class Handler {
       } /* else if (Schemes.rerefResponseScheme.every((key: string): boolean => messageJson.hasOwnProperty(key))) {
         return 'reref';
       } */
+      else if (Schemes.statusResponseScheme.every((key: string): boolean => messageJson.hasOwnProperty(key))) {
+        return 'status';
+      }
     }
     return '';
   }
@@ -62,11 +66,13 @@ export default class Handler {
           // rerefResponse handler
           break; */
         case 'conn':
-          const connResponse: ConnResponse = messageJson as ConnResponse;
-          Store.secret = Helper.base64Decode(connResponse[1].secret);
-          Store.clientToken = connResponse[1].clientToken;
-          Store.serverToken = connResponse[1].serverToken;
-          Session.generateEncryptionDetails();
+          if (!Helper.jsonFileExists('auth-credentials')) {
+            const connResponse: ConnResponse = messageJson as ConnResponse;
+            Store.secret = Helper.base64Decode(connResponse[1].secret);
+            Store.clientToken = connResponse[1].clientToken;
+            Store.serverToken = connResponse[1].serverToken;
+            Session.generateEncryptionDetails();
+          }
           break;
         case 'blocklist':
           const blocklistResponse: BlocklistResponse = messageJson as BlocklistResponse;
@@ -79,6 +85,26 @@ export default class Handler {
         case 'props':
           const propsResponse: PropsResponse = messageJson as PropsResponse;
           // propsResponse handler
+          break;
+        case 'status':
+          const statusResponse: StatusResponse = messageJson as StatusResponse;
+          switch (statusResponse.status) {
+            case 200:
+              // successful connection
+              break;
+            case 401:
+              // unpaired from the phone
+              break;
+            case 403:
+              // access denied
+              break;
+            case 405:
+              // already logged in
+              break;
+            case 409:
+              // logged in from another location
+              break;
+          }
           break;
       }
     }

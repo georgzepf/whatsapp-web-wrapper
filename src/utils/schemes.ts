@@ -7,4 +7,5 @@ export default class Schemes {
   public static readonly blocklistResponseScheme: string[] = ['id', 'blocklist'];
   public static readonly streamResponseScheme: [string, string, boolean, string] = ['Stream', 'update', false, Store.whatsappVersion.join('.')];
   public static readonly propsResponseScheme: string[] = ['camelotWeb', 'preloadStickers', 'webVoipInternalTester', 'webCleanIncomingFilename', 'webEnableModelStorage', 'wsCanCacheRequests', 'notificationQuery', 'fbCrashlog', 'bucket', 'gifSearch', 'maxFileSize', 'media', 'maxSubject', 'maxParticipants', 'imageMaxKBytes', 'imageMaxEdge', 'statusVideoMaxDuration', 'frequentlyForwardedMessages', 'suspiciousLinks', 'fwdUiStartTs', 'restrictGroups', 'productCatalogOpenDeeplink', 'multicastLimitGlobal', 'finalLiveLocation', 'frequentlyForwardedMax', 'mmsMediaKeyTTL', 'stickers', 'announceGroups', 'groupDescLength'];
+  public static readonly statusResponseScheme: string[] = ['status'];
 }
