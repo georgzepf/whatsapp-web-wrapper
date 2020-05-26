@@ -1,4 +1,4 @@
-import {MessageEvent} from 'ws';
+import {ErrorEvent, MessageEvent} from 'ws';
 import Schemes from '../utils/schemes';
 import Store from '../utils/store';
 import Session from './session';
@@ -9,6 +9,7 @@ import ConnResponse from '../../models/responses/conn.response';
 import BlocklistResponse from '../../models/responses/blocklist.response';
 import StreamResponse from '../../models/responses/stream.response';
 import PropsResponse from '../../models/responses/props.response';
+import AuthCredentials from '../../models/auth-credentials';
 
 export default class Handler {
   public static getEventType(messageJson: any[] | object): string {
@@ -42,9 +43,19 @@ export default class Handler {
       const eventType: string = Handler.getEventType(messageJson);
       switch (eventType) {
         case 'init':
-          const initResponse: InitResponse = messageJson as InitResponse;
-          Store.serverId = initResponse.ref;
-          Session.generateQrCode();
+          if (Helper.jsonFileExists('auth-credentials')) {
+            const authCredentials: AuthCredentials = Helper.readJsonFile('auth-credentials');
+            Store.encKey = authCredentials.encKey;
+            Store.macKey = authCredentials.macKey;
+            Store.clientToken = authCredentials.clientToken;
+            Store.serverToken = authCredentials.serverToken;
+            Store.clientId = authCredentials.clientId;
+            Session.restoreSession();
+          } else {
+            const initResponse: InitResponse = messageJson as InitResponse;
+            Store.serverId = initResponse.ref;
+            Session.generateQrCode();
+          }
           break;
         /* case 'reref':
           const rerefResponse: RerefResponse = messageJson as RerefResponse;
@@ -52,7 +63,9 @@ export default class Handler {
           break; */
         case 'conn':
           const connResponse: ConnResponse = messageJson as ConnResponse;
-          Store.secret = Helper.decodeBase64(connResponse[1].secret);
+          Store.secret = Helper.base64Decode(connResponse[1].secret);
+          Store.clientToken = connResponse[1].clientToken;
+          Store.serverToken = connResponse[1].serverToken;
           Session.generateEncryptionDetails();
           break;
         case 'blocklist':
@@ -69,5 +82,13 @@ export default class Handler {
           break;
       }
     }
+  }
+
+  public static onError(error: ErrorEvent): void {
+    // onError handler
+  }
+
+  public static onDisconnect(): void {
+    // onDisconnect handler
   }
 }
